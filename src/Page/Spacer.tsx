@@ -7,6 +7,8 @@ type SpacerProps = {
 
 export const Spacer = ({ handleClick, showHint }: SpacerProps) => {
     return (
-        <div className={styles.spacer}>{showHint && 'Click to create the first paragaraph.'}</div>
+        <div className={styles.spacer} onClick={handleClick}>
+            {showHint && 'Click to create the first paragaraph.'}
+        </div>
     );
 };
