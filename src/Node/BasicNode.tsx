@@ -4,6 +4,7 @@ import { FormEventHandler, KeyboardEventHandler, useEffect, useRef } from 'react
 import { nanoid } from 'nanoid';
 import { useAppState } from '../state/AppStateContext';
 import { CommandPanel } from './CommandPanel';
+import cx from 'classnames';
 
 type BasicNodeProps = {
     node: NodeData;
@@ -14,6 +15,7 @@ type BasicNodeProps = {
 
 export const BasicNode = ({ node, updateFocusedIndex, isFocused, index }: BasicNodeProps) => {
     const nodeRef = useRef<HTMLDivElement>(null);
+
     const showCommandPanel = isFocused && node?.value?.match(/^\//);
 
     const { changeNodeValue, changeNodeType, removeNodeByIndex, addNode } = useAppState();
@@ -81,7 +83,7 @@ export const BasicNode = ({ node, updateFocusedIndex, isFocused, index }: BasicN
                 ref={nodeRef}
                 contentEditable
                 suppressContentEditableWarning
-                className={styles.node}
+                className={cx(styles.node, styles[node.type])}
             />
         </>
     );
