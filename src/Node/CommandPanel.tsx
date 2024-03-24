@@ -16,7 +16,7 @@ type SupportedNodeType = {
 
 const supportedNodeTypes: SupportedNodeType[] = [
     { value: 'text', name: 'Text' },
-    { value: 'list', name: 'Text' },
+    { value: 'list', name: 'List' },
     { value: 'heading1', name: 'Heading1' },
     { value: 'heading2', name: 'Heading2' },
     { value: 'heading3', name: 'Heading3' },
