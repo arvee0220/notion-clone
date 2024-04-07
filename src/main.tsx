@@ -5,7 +5,9 @@ import './index.css';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthSessionProvider } from './auth/AuthSessionContext.tsx';
 
-const root = document.getElementById('root')!;
+const root = document.getElementById('root')! as HTMLElement;
+
+console.log(root, 'root');
 
 ReactDOM.createRoot(root).render(
     <React.StrictMode>
