@@ -53,6 +53,7 @@ export function withInitialState<TProps>(
                 } catch (e) {
                     if (e instanceof Error) {
                         setError(e);
+                        console.log(e);
                     }
                 }
                 setIsLoading(false);
