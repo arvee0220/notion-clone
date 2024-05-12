@@ -16,7 +16,7 @@ export const Auth = () => {
             setLoading(true);
             const { error } = await supabase.auth.signInWithOtp({
                 email,
-                options: { emailRedirectTo: 'http://localhost:5173/auth' }, //add your environmental variable here
+                options: { emailRedirectTo: 'https://notion-clone512.netlify.app/auth' }, //add your environmental variable here
             });
             if (error) throw error;
             alert('Check your email for the login link!');
