@@ -1,12 +1,12 @@
-import { useState, FormEvent } from 'react';
-import { useAuthSession } from './AuthSessionContext';
-import { Navigate } from 'react-router-dom';
-import styles from '../utils.module.css';
-import { supabase } from '../supabaseClient';
+import { useState, FormEvent } from "react";
+import { useAuthSession } from "./UseContextForAuth";
+import { Navigate } from "react-router-dom";
+import styles from "../utils.module.css";
+import { supabase } from "../supabaseClient";
 
 export const Auth = () => {
     const [loading, setLoading] = useState(false);
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState("");
     const { session } = useAuthSession();
 
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
@@ -14,9 +14,12 @@ export const Auth = () => {
 
         try {
             setLoading(true);
-            const { error } = await supabase.auth.signInWithOtp({ email });
+            const { error } = await supabase.auth.signInWithOtp({
+                email,
+                options: { emailRedirectTo: import.meta.env.VITE_PROJECT_URL },
+            });
             if (error) throw error;
-            alert('Check your email for the login link!');
+            alert("Check your email for the login link!");
         } catch (error) {
             alert(error);
         } finally {
@@ -25,7 +28,7 @@ export const Auth = () => {
     };
 
     if (session) {
-        return <Navigate to='/' />;
+        return <Navigate to="/:id" />;
     }
 
     return (
@@ -34,16 +37,16 @@ export const Auth = () => {
                 <h1>My Notes App</h1>
                 <p>Sign in via magic link with your email below</p>
                 {loading ? (
-                    'Sending magic link...'
+                    "Sending magic link..."
                 ) : (
                     <form onSubmit={handleLogin}>
-                        <label htmlFor='email'>Email: </label>
+                        <label htmlFor="email">Email: </label>
                         <input
-                            type='email'
-                            id='email'
+                            type="email"
+                            id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder='Your email'
+                            placeholder="Your email"
                         />
                         <button>Send magic link</button>
                     </form>
