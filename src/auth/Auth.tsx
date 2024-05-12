@@ -21,14 +21,16 @@ export const Auth = () => {
             if (error) throw error;
             alert("Check your email for the login link!");
         } catch (error) {
-            alert(error);
+            const errorMessage = (error as { message: string }).message;
+            console.error("Login error:", errorMessage);
+            alert(`Login failed: ${errorMessage}`);
         } finally {
             setLoading(false);
         }
     };
 
     if (session) {
-        return <Navigate to="/:id" />;
+        return <Navigate to="/" />;
     }
 
     return (
