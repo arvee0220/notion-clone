@@ -16,7 +16,11 @@ export const Auth = () => {
             setLoading(true);
             const { error } = await supabase.auth.signInWithOtp({
                 email,
-                options: { emailRedirectTo: import.meta.env.VITE_PROJECT_URL },
+                options: {
+                    emailRedirectTo:
+                        import.meta.env.VITE_PROJECT_URL ||
+                        "http://localhost:5173/auth",
+                },
             });
             if (error) throw error;
             alert("Check your email for the login link!");
