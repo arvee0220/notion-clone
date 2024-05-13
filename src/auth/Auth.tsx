@@ -17,9 +17,7 @@ export const Auth = () => {
             const { error } = await supabase.auth.signInWithOtp({
                 email,
                 options: {
-                    emailRedirectTo:
-                        import.meta.env.VITE_PROJECT_URL ||
-                        "http://localhost:5173/auth",
+                    emailRedirectTo: import.meta.env.VITE_PROJECT_URL,
                 },
             });
             if (error) throw error;
