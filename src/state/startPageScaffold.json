@@ -18,9 +18,21 @@
             "value": "Here are a few list items just to show how it looks like:",
             "id": "tGEVZQlUB_zGi66GU2TIz"
         },
-        { "type": "list", "value": "First item", "id": "zJ42BYE7QCx_1XSsZETuc" },
-        { "type": "list", "value": "Second item", "id": "ia_pE2qrqR8un_BYqqM9_" },
-        { "type": "list", "value": "Third item", "id": "gD6IRCl09HQGpaDorOiF6" },
+        {
+            "type": "list",
+            "value": "First item",
+            "id": "zJ42BYE7QCx_1XSsZETuc"
+        },
+        {
+            "type": "list",
+            "value": "Second item",
+            "id": "ia_pE2qrqR8un_BYqqM9_"
+        },
+        {
+            "type": "list",
+            "value": "Third item",
+            "id": "gD6IRCl09HQGpaDorOiF6"
+        },
         { "type": "text", "value": "", "id": "pH0TGrzTJ09_8w8XXfKO8" },
         {
             "type": "heading2",
@@ -38,7 +50,11 @@
             "value": "Currently the app supports:",
             "id": "v3s7NU1a-X_uWSAELT2nK"
         },
-        { "type": "list", "value": "regular text", "id": "ADtjGSZ4p53f9VpQK72f1" },
+        {
+            "type": "list",
+            "value": "regular text",
+            "id": "ADtjGSZ4p53f9VpQK72f1"
+        },
         {
             "type": "list",
             "value": "unordered lists",

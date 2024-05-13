@@ -1,37 +1,41 @@
 import { useState, FormEvent } from "react";
-import { useAuthSession } from "./UseContextForAuth";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { auth } from "../firebaseClient"; // Ensure this points to your Firebase config file
+import { sendSignInLinkToEmail, onAuthStateChanged } from "firebase/auth";
 import styles from "../utils.module.css";
-import { supabase } from "../supabaseClient";
 
 export const Auth = () => {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState("");
-    const { session } = useAuthSession();
+    const navigate = useNavigate();
 
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setLoading(true);
 
-        try {
-            setLoading(true);
-            const { error } = await supabase.auth.signInWithOtp({
-                email,
-                options: { emailRedirectTo: import.meta.env.VITE_PROJECT_URL },
+        const actionCodeSettings = {
+            url: import.meta.env.VITE_PROJECT_URL || "http://localhost:5173/",
+            handleCodeInApp: true,
+        };
+
+        sendSignInLinkToEmail(auth, email, actionCodeSettings)
+            .then(() => {
+                window.localStorage.setItem("emailForSignIn", email);
+                alert("Check your email for the login link!");
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error("Login error:", error.message);
+                alert(`Login failed: ${error.message}`);
+                setLoading(false);
             });
-            if (error) throw error;
-            alert("Check your email for the login link!");
-        } catch (error) {
-            const errorMessage = (error as { message: string }).message;
-            console.error("Login error:", errorMessage);
-            alert(`Login failed: ${errorMessage}`);
-        } finally {
-            setLoading(false);
-        }
     };
 
-    if (session) {
-        return <Navigate to="/" />;
-    }
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            navigate("/");
+        }
+    });
 
     return (
         <div className={styles.centeredFlex}>
@@ -42,7 +46,7 @@ export const Auth = () => {
                     "Sending magic link..."
                 ) : (
                     <form onSubmit={handleLogin}>
-                        <label htmlFor="email">Email: </label>
+                        <label htmlFor="email">Email:</label>
                         <input
                             type="email"
                             id="email"
@@ -50,7 +54,7 @@ export const Auth = () => {
                             onChange={(e) => setEmail(e.target.value)}
                             placeholder="Your email"
                         />
-                        <button>Send magic link</button>
+                        <button type="submit">Send magic link</button>
                     </form>
                 )}
             </div>

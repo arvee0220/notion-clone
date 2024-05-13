@@ -1,15 +1,15 @@
-import { Page } from './Page/Page';
-import { AppStateProvider } from './state/AppStateContext';
-import { Route, Routes } from 'react-router-dom';
-import { Auth } from './auth/Auth';
-import { Private } from './auth/Private';
+import { Page } from "./Page/Page";
+import { AppStateProvider } from "./state/AppStateContext";
+import { Route, Routes } from "react-router-dom";
+import { Auth } from "./auth/Auth";
+import { Private } from "./auth/Private";
 
 function App() {
     return (
         <Routes>
-            <Route path='/auth' element={<Auth />} />
+            <Route path="/auth" element={<Auth />} />
             <Route
-                path='/:id'
+                path="/:id"
                 element={
                     <Private
                         component={
@@ -21,7 +21,7 @@ function App() {
                 }
             />
             <Route
-                path='/'
+                path="/"
                 element={
                     <Private
                         component={

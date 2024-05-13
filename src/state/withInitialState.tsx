@@ -1,10 +1,19 @@
-import { Page } from '../utils/types';
-import { useMatch } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
-import startPageScaffold from './startPageScaffold.json';
-import styles from '../utils.module.css';
-import { Loader } from '../components/Loader';
+import { useEffect, useState } from "react";
+import { useMatch } from "react-router-dom";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    doc,
+    setDoc,
+} from "firebase/firestore";
+import { Page } from "../utils/types";
+import styles from "../utils.module.css";
+import { Loader } from "../components/Loader";
+import startPageScaffold from "./startPageScaffold.json";
 
 type InjectedProps = {
     initialState: Page;
@@ -13,52 +22,65 @@ type InjectedProps = {
 type PropsWithoutInjected<TBaseProps> = Omit<TBaseProps, keyof InjectedProps>;
 
 export function withInitialState<TProps>(
-    WrappedComponent: React.ComponentType<PropsWithoutInjected<TProps> & InjectedProps>
+    WrappedComponent: React.ComponentType<
+        PropsWithoutInjected<TProps> & InjectedProps
+    >
 ) {
     return (props: PropsWithoutInjected<TProps>) => {
-        const match = useMatch('/:slug');
-        const pageSlug = match ? match.params.slug : 'start';
-
-        const [initialState, setInitialState] = useState<Page | null>();
+        const match = useMatch("/:slug");
+        const pageSlug = match ? match.params.slug : "start";
+        const [initialState, setInitialState] = useState<Page | null>(null);
         const [isLoading, setIsLoading] = useState(true);
         const [error, setError] = useState<Error | undefined>();
 
         useEffect(() => {
+            const auth = getAuth();
+            const db = getFirestore();
             setIsLoading(true);
-            const fetchInitialState = async () => {
+
+            const fetchInitialState = async (uid: string) => {
                 try {
-                    const { data: userData } = await supabase.auth.getUser();
-                    const user = userData.user;
-                    if (!user) {
-                        throw new Error('User is not logged in');
-                    }
-                    const { data } = await supabase
-                        .from('pages')
-                        .select('title, id, cover, nodes, slug')
-                        .match({ slug: pageSlug, created_by: user.id })
-                        .single();
-                    if (!data && pageSlug === 'start') {
-                        const result = await supabase
-                            .from('pages')
-                            .insert({
-                                ...startPageScaffold,
-                                slug: 'start',
-                                created_by: user.id,
-                            })
-                            .single();
-                        setInitialState(result?.data);
+                    const pagesRef = collection(db, "pages");
+                    const q = query(
+                        pagesRef,
+                        where("slug", "==", pageSlug),
+                        where("created_by", "==", uid)
+                    );
+                    const querySnapshot = await getDocs(q);
+
+                    if (querySnapshot.empty && pageSlug === "start") {
+                        const startPageRef = doc(collection(db, "pages"));
+                        await setDoc(startPageRef, {
+                            ...startPageScaffold,
+                            slug: "start",
+                            created_by: uid,
+                        });
+                        setInitialState({
+                            ...startPageScaffold,
+                            slug: "start",
+                        });
                     } else {
-                        setInitialState(data);
+                        querySnapshot.forEach((doc) => {
+                            setInitialState({
+                                ...doc.data(),
+                                id: doc.id,
+                            } as Page);
+                        });
                     }
                 } catch (e) {
-                    if (e instanceof Error) {
-                        setError(e);
-                        console.log(e);
-                    }
+                    setError(e as Error);
                 }
                 setIsLoading(false);
             };
-            fetchInitialState();
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    fetchInitialState(user.uid);
+                } else {
+                    setError(new Error("User is not logged in"));
+                    setIsLoading(false);
+                }
+            });
         }, [pageSlug]);
 
         if (isLoading) {

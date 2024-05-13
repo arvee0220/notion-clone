@@ -7,11 +7,11 @@ type PrivateProps = {
 };
 
 export const Private = ({ component }: PrivateProps) => {
-    const { session, loading } = useAuthSession();
+    const { user, loading } = useAuthSession();
 
     if (loading) {
-        <>Authenticating...</>;
+        <div>Authenticating...</div>;
     }
 
-    return session ? component : <Navigate to="/auth" />;
+    return user ? component : <Navigate to="/auth" />;
 };
